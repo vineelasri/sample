@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="430345c5-5aee-48ed-80a6-9d1bca59f632" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<vm:config name="VM_Config" doc:name="VM Config" doc:id="af5bf7c0-1193-4a42-82d1-d0f1ca2c2acb" >
+		<vm:queues >
+			<vm:queue queueName="myq" />
+		</vm:queues>
+	</vm:config>
+	<flow name="vmconpublishFlow" doc:id="f1bd971a-9852-413c-a927-5ab83a3c57b5" >
+		<http:listener doc:name="Listener" doc:id="b51949bf-7e0b-4492-a1c4-eb7ef36164fb" config-ref="HTTP_Listener_config" path="/vmconpublish"/>
+		<logger level="INFO" doc:name="Logger" doc:id="32618dd5-a081-451d-8f8c-788c0ca6295c" message="Hi"/>
+		<vm:publish queueName="myq" doc:id="769550d9-b9d8-4e78-ae0b-a804dc498cd2" config-ref="VM_Config"/>
+	</flow>
+	<flow name="vmconpublishFlow1" doc:id="ff9c0a70-d435-4841-956d-fe0cdb4758e8" initialState="stopped">
+		<http:listener doc:name="Listener" doc:id="daa8f232-bbbd-4bc1-a811-226ebc840c99" config-ref="HTTP_Listener_config" path="consume"/>
+		<logger level="INFO" doc:name="Logger" doc:id="21f0566f-767a-4cdd-a63e-825905744751" message="#[payload]"/>
+	</flow>
+	<flow name="vmconpublishFlow2" doc:id="6f2ecad9-4810-425e-9fd8-1797da762add" >
+		<vm:listener queueName="myq" doc:name="Listener" doc:id="10c55f13-3259-4d99-ad3f-3d30d052d3f4" config-ref="VM_Config"/>
+		<vm:consume doc:name="Consume" doc:id="4e2fdab3-552b-43bd-a2fe-e8d21361263f" config-ref="VM_Config" queueName="myq" />
+		<logger level="INFO" doc:name="Logger" doc:id="4ba0d78c-4d5e-43e5-8b2c-d0ce5dbd29fb" message="#[payload]" />
+	</flow>
+</mule>

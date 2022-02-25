@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="vmconpublish-suite.xml" />
+	<munit:test name="vmconpublishFlow-test" doc:id="d5fb24b7-1bcf-4c58-a4e2-4fddea97f665" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="50bfdb49-6e98-4b01-a3fa-335f50c6664a" >
+				<munit:payload value="#[output text/plain --- readUrl('classpath://vmconpublishFlowtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="text/plain" />
+				<munit:attributes value="#[readUrl('classpath://vmconpublishFlowtest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to vmconpublishFlow" doc:id="47207636-208d-452e-976e-f4411769d1ec" name="vmconpublishFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="81769e9a-c2e7-4d51-9669-0f87dadd9b83" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import vmconpublishFlowtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
